@@ -11,7 +11,7 @@ public:
 	const XAUDIO2_BUFFER*	GetBuffer() const { return &m_buffer; }
 	WAVEFORMATEX*		GetWaveFormat()  { return &m_waveFormat; }
 	void Create();
-	void Load(TCHAR* fileName);
+	void Load(std::wstring fileName);
 
 
 private:

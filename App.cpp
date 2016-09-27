@@ -6,7 +6,7 @@ App::App(){
 
 void App::Create(){
 
-	audio.Create();
+	gAudio.Create();
 	//audio.CreateBuffer();
 }
 
@@ -22,15 +22,15 @@ void App::Draw(){
 }
 
 void App::Play(int num) {
-	audio.Play(num);
+	gAudio.Play(num);
 }
 
 void App::Stop(int num) {
-	audio.Stop(num);
+	gAudio.Stop(num);
 
 }
 
 WAVEFORMATEX* App::GetWaveFormat(int i) {
 
-	return audio.GetWaveFormat(i);
+	return gAudio.GetWaveFormat(i);
 }

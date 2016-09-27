@@ -15,6 +15,7 @@
 #include <tchar.h>
 #include <stdint.h>
 #include <assert.h>
+#include <string>
 
 #include <objbase.h>
 #include <mmreg.h>

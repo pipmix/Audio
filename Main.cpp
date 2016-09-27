@@ -7,6 +7,12 @@ using namespace std;
 
 #define MAX_LOADSTRING 100
 
+int gColorDarkGrey = 50;
+int gColG70 = 70;
+
+Audio gAudio;
+ComPtr<IXAudio2> g_xAudio2;
+
 HFONT consoleFont;
 
 HINSTANCE hInst;
@@ -24,7 +30,7 @@ HWND hButSet1;
 HWND hEditBox;
 
 HWND hSlider1, hSlider2;
-
+void DrawButton(DRAWITEMSTRUCT *dis, HWND hwnd);
 static TCHAR szWindowClass[] = _T("AudioWindowClass");
 static TCHAR szTitle[] = _T("Audio");
 
@@ -88,7 +94,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance) {
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(gColorDarkGrey, gColorDarkGrey, gColorDarkGrey));
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
@@ -100,6 +106,20 @@ ATOM MyRegisterClass(HINSTANCE hInstance) {
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
 
+	case WM_DRAWITEM:
+	{
+		DRAWITEMSTRUCT *item = (DRAWITEMSTRUCT*)lParam;
+		switch (item->CtlID) {
+		case DEF_BUT1_PLAY: DrawButton(item, hBut1Play); break;
+		case DEF_BUT1_STOP: DrawButton(item, hBut1Stop); break;
+		case DEF_BUT2_PLAY: DrawButton(item, hBut2Play); break;
+		case DEF_BUT2_STOP: DrawButton(item, hBut2Stop); break;
+		case DEF_BUT_SET1: DrawButton(item, hButSet1); break;
+
+		}
+		return TRUE;
+	}
+	break;
 		case WM_CREATE: {
 
 
@@ -132,6 +152,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			hSlider1 = CreateSlider(hWnd, 0, 100, 40, 50, DEF_SLI_1);
 			hSlider2 = CreateSlider(hWnd, 0, 100, 40, 50, DEF_SLI_2);
 
+
+
 		}
 		break;
 
@@ -144,22 +166,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				case DEF_BUT_SET1: {
 					DWORD pos = SendMessageW(hSlider1, TBM_GETPOS, 0, 0);
 					int pp = pos;
+					//SendMessage(hEditBox, EM_SETSEL, -2, -2);
+					//SendMessage(hEditBox, EM_REPLACESEL, 0, (LPARAM)to_wstring(pp).c_str());
+
+
+					float vChange = (float)pp *0.01f;
+					gAudio.SetVolume(vChange, 1);
 					SendMessage(hEditBox, EM_SETSEL, -2, -2);
-					SendMessage(hEditBox, EM_REPLACESEL, 0, (LPARAM)to_wstring(pp).c_str());
+					SendMessage(hEditBox, EM_REPLACESEL, 0, (LPARAM)to_wstring(vChange).c_str());
 
 				}
 								break;
 
 
 
-				case DEF_SLI_1:
-				{
-					DWORD pos = SendMessageW(hSlider1, TBM_GETPOS, 0, 0);
-					int pp = pos;
-					SendMessage(hEditBox, EM_SETSEL, -2, -2);
-					SendMessage(hEditBox, EM_REPLACESEL, 0, (LPARAM)to_wstring(pp).c_str());
-				}
-					break;
 
 
 				case DEF_BUT1_PLAY:
@@ -317,11 +337,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		case WM_SIZE: {
 			int butWidth = 100;
 			int butHeight = 30;
-			MoveWindow(hBut1Play, 0, 30, butWidth, butHeight, 1);
-			MoveWindow(hBut1Stop, 0, 90, butWidth, butHeight, 1);
-			MoveWindow(hBut2Play, 0, 150, butWidth, butHeight, 1);
-			MoveWindow(hBut2Stop, 0, 210, butWidth, butHeight, 1);
-			MoveWindow(hButSet1, 100, 210, butWidth, butHeight, 1);
+			int ind = 5;
+
+			MoveWindow(hBut1Play, ind, 30, butWidth, butHeight, 1);
+			MoveWindow(hBut1Stop, ind, 90, butWidth, butHeight, 1);
+			MoveWindow(hBut2Play, ind, 150, butWidth, butHeight, 1);
+			MoveWindow(hBut2Stop, ind, 210, butWidth, butHeight, 1);
+			MoveWindow(hButSet1, ind+100, 210, butWidth, butHeight, 1);
 
 			MoveWindow(hSlider1, 300, 20, 200, 30, 1);
 			MoveWindow(hSlider2, 300, 60, 200, 30, 1);
@@ -349,3 +371,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return 0;
 }
 
+void DrawButton(DRAWITEMSTRUCT *itemStruct, HWND hwnd) {
+	SetBkColor(itemStruct->hDC, RGB(gColG70, gColG70, gColG70));
+	HDC hdc = itemStruct->hDC;
+	RECT rect = itemStruct->rcItem;        //Get button rect
+
+	//FillRect(hdc, &rect, (HBRUSH)RGB(255, 0, 255));
+	SetTextColor(hdc, (COLORREF)RGB(255, 255,255));
+
+
+
+	//SetBkMode(hdc, OPAQUE);
+	
+
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+
+	
+
+	WCHAR buf[255];
+	GetWindowText(hwnd, buf, 255);
+	DrawText(hdc, buf, std::wcslen(buf), &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+
+	UINT state = itemStruct->itemState; //Get state of the button
+	if ((state & ODS_SELECTED))            // If it is pressed
+	{
+		DrawEdge(hdc, &rect, EDGE_SUNKEN, BF_RECT);
+
+	}
+	else
+	{
+		DrawEdge(hdc, &rect, EDGE_RAISED, BF_RECT);
+
+	}
+	//SetTextColor(hdc, (COLORREF)RGB(255, 255, 0));
+
+
+	if ((state & ODS_FOCUS))       // If the button is focused
+	{
+
+		int iChange = 3;
+		rect.top += iChange;
+		rect.left += iChange;
+		rect.right -= iChange;
+		rect.bottom -= iChange;
+		DrawFocusRect(hdc, &rect);
+
+	}
+
+	SIZE size;
+	GetTextExtentPoint32(hdc, buf, std::wcslen(buf), &size);
+	ExtTextOut(hdc,
+
+		((itemStruct->rcItem.right - itemStruct->rcItem.left) - size.cx) / 2,
+
+		((itemStruct->rcItem.bottom - itemStruct->rcItem.top) - size.cy) / 2,
+
+		ETO_OPAQUE | ETO_CLIPPED, &itemStruct->rcItem, buf, std::wcslen(buf), NULL);
+
+
+	
+}

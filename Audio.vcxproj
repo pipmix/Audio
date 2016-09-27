@@ -145,11 +145,14 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioChannel.h" />
     <ClInclude Include="AudioEffect.h" />
     <ClInclude Include="AudioTools.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="Note.h" />
+    <ClInclude Include="Pattern.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Util.h" />
@@ -159,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioTools.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Main.cpp" />

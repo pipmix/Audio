@@ -1,6 +1,7 @@
 #pragma once
 #include "Audio.h"
 
+extern Audio gAudio;
 class App {
 
 public:
@@ -19,7 +20,7 @@ private:
 	void Draw();
 
 
-	Audio audio;
+	
 
 
 
