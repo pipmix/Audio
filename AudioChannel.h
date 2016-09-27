@@ -9,6 +9,7 @@ public:
 
 	AudioChannel();
 	void Create();
+	void SetVol();
 
 	void SetToChannel(IXAudio2SourceVoice* srcVoice);
 	IXAudio2SubmixVoice* GetChannel();

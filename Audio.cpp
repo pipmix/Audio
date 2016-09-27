@@ -179,6 +179,7 @@ void Audio::Exit()
 void Audio::SetVolume(float v, int chan)
 {
 	m_submixVoice->SetVolume(v);
+	//pSourceVoice->SetFrequencyRatio(frequencyRatio);
 	//if (chan == 1)m_submixVoice->SetVolume(v);
 }
 

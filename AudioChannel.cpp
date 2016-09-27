@@ -16,6 +16,12 @@ void AudioChannel::Create(){
 
 }
 
+void AudioChannel::SetVol()
+{
+	//float SourceVoiceChannelVolumes[1] = { 1.0 };
+	//hr = pSourceVoice->SetChannelVolumes(1, SourceVoiceChannelVolumes);
+}
+
 void AudioChannel::SetToChannel(IXAudio2SourceVoice * srcVoice)
 {
 	//m_SourceVoice->SetOutputVoices(&m_voiceSends);
