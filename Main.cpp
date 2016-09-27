@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Audio.h"
+#include "App.h"
 
 #define MAX_LOADSTRING 100
 
@@ -13,7 +13,7 @@ static TCHAR szTitle[] = _T("Audio");
 
 												// Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
+
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
@@ -26,6 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
 	MyRegisterClass(hInstance);
 	ghWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
@@ -33,6 +35,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ShowWindow(ghWnd, nCmdShow);
 	UpdateWindow(ghWnd);
 
+	App app;
+	app.Create();
 
 	MSG msg = { 0 };
 	while (WM_QUIT != msg.message) {
@@ -41,6 +45,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			DispatchMessage(&msg);
 		}
 		else {
+			app.Tick();
 
 		}
 	}

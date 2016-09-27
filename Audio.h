@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "WAVFileReader.h"
 #include "Helpers.h"
+#include "AudioTools.h"
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
@@ -15,6 +16,7 @@ public:
 
 							Audio();
 	void					Create();
+	XAUDIO2_BUFFER*			CreateBuffer();
 	IXAudio2SourceVoice*	CreateSourceVoice();
 	IXAudio2SubmixVoice*	CreateSubmixVoice();
 	IXAudio2MasteringVoice* CreateMasterVoice();
@@ -35,7 +37,7 @@ private:
 	IXAudio2MasteringVoice*		m_masterVoice;
 	IXAudio2SourceVoice*		m_SourceVoice;
 	IXAudio2SubmixVoice*		m_submixVoice;
-
+	XAUDIO2_BUFFER*				m_audioBuffer;
 
 	//ComPtr<IXAudio2SourceVoice> m_sourceVoice;
 	IXAudio2SubmixVoice* subMix01;
@@ -60,4 +62,5 @@ private:
 	XAUDIO2_VOICE_SENDS SFXSendList2;
 
 	float frequencyRatio;
+
 };

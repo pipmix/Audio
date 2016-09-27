@@ -1,8 +1,7 @@
 #include "Audio.h"
 
 
-Audio::Audio()
-{
+Audio::Audio(){
 }
 
 void Audio::Create() {
@@ -11,8 +10,14 @@ void Audio::Create() {
 	HRESULT hr;
 
 
-	if (FAILED(hr = XAudio2Create(&m_xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))	Error(L"Audio Error", L"xaudio2 device creation");
-	if (FAILED(hr = m_xAudio2->CreateMasteringVoice(&m_masterVoice, m_sampleRate, m_channels)))			Error(L"Audio Error", L"mastering voice creation");
+	hr = XAudio2Create(&m_xAudio2);
+	if (FAILED(hr)) Error(L"Audio Error", L"xaudio2 device creation");
+
+
+	hr = m_xAudio2->CreateMasteringVoice(&m_masterVoice);
+	if (FAILED(hr)) Error(L"Audio Error", L"mastering voice creation");
+
+	//m_xAudio2->CreateMasteringVoice(&m_masterVoice, m_sampleRate, m_channels)))			Error(L"Audio Error", L"mastering voice creation");
 
 
 }
@@ -86,9 +91,104 @@ IXAudio2SubmixVoice* Audio::CreateSubmixVoice() {
 
 IXAudio2SourceVoice* Audio::CreateSourceVoice() {
 
-	IXAudio2SourceVoice* sourceVoice;
-	m_xAudio2->CreateSourceVoice(&pSourceVoice2, waveData2.wfx);
-	return sourceVoice;
+	HRESULT hr;
+	//IXAudio2SourceVoice* sourceVoice;
+	//m_xAudio2->CreateSourceVoice(&pSourceVoice2, waveData2.wfx);
+	//return sourceVoice;
+
+	byte soundData[5 * 2 * 44100];
+
+	WAVEFORMATEX waveformat;
+	waveformat.wFormatTag = WAVE_FORMAT_PCM;
+	waveformat.nChannels = 1;
+	waveformat.nSamplesPerSec = 44100;
+	waveformat.nAvgBytesPerSec = 44100 * 2;  // nSamplesPerSec * nBlockAlign
+	waveformat.nBlockAlign = 2; // bytes per sample ? nChannels times wBitsPerSample divided by 8
+	waveformat.wBitsPerSample = 16; // = 2 bytes  per samples
+	waveformat.cbSize = 0;
+
+	m_xAudio2->CreateSourceVoice(&m_SourceVoice, &waveformat);
+
+	m_SourceVoice->Start();
+
+	for (int index = 0, second = 0; second < 5; second++)
+	{
+		for (int cycle = 0; cycle < 441; cycle++)
+		{
+			for (int sample = 0; sample < 100; sample++)
+			{
+				short value = sample < 50 ? 32767 : -32768;
+				soundData[index++] = value & 0xFF;
+				soundData[index++] = (value >> 8) & 0xFF;
+			}
+		}
+	}
+
+	XAUDIO2_BUFFER buffer = { 0 };
+	buffer.AudioBytes = 2 * 5 * 44100;
+	buffer.pAudioData = soundData;
+	buffer.Flags = XAUDIO2_END_OF_STREAM;
+	buffer.PlayBegin = 0;
+	buffer.PlayLength = 5 * 44100;
+
+	hr = m_SourceVoice->SubmitSourceBuffer(&buffer);
+	if (FAILED(hr))Error(L"Audio Error", L"Buffer creation");
+
+	
+
+	return nullptr;
+	// if (!playing) source->start
+	//else {
+	//	source->stop()
+	//	source->start()
+	//}
+
+
+
+}
+
+XAUDIO2_BUFFER*	Audio::CreateBuffer() {
+
+	WAVEFORMATEXTENSIBLE wfx = { 0 };
+	XAUDIO2_BUFFER buffer = { 0 };
+
+
+	TCHAR * strFileName = _TEXT("c:/s2.wav");
+
+
+	HANDLE hFile = CreateFile(strFileName,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,0,NULL);
+
+
+	DWORD dwChunkSize;
+	DWORD dwChunkPosition;
+	FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
+	DWORD filetype;
+	ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
+	if (filetype != fourccWAVE)return nullptr;
+
+
+	FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
+	ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+	FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
+	BYTE * pDataBuffer = new BYTE[dwChunkSize];
+	ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
+	buffer.AudioBytes = dwChunkSize;  //buffer containing audio data
+	buffer.pAudioData = pDataBuffer;  //size of the audio buffer in bytes
+	buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
+
+	HRESULT hr;
+	hr = m_xAudio2->CreateSourceVoice(&m_SourceVoice, (WAVEFORMATEX*)&wfx); 
+	if (FAILED(hr))Error(L"Audio Error", L"Create Source Voice");
+
+	hr = m_SourceVoice->SubmitSourceBuffer(&buffer);
+	if (FAILED(hr))Error(L"Audio Error", L"Submit Source Voice");
+
+	hr = m_SourceVoice->Start(0);
+	if (FAILED(hr))Error(L"Audio Error", L"Source voice start");
+
+
+
+
 }
 
 
