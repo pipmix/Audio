@@ -1,0 +1,8 @@
+*.db
+Debug/
+ipch/
+Release/
+WAVFileReader.h
+WAVFileReader.cpp
+Audio.VC.VC.opendb
+Audio.aps
