@@ -102,9 +102,10 @@ IXAudio2SourceVoice* Audio::CreateSourceVoice() {
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 	waveformat.nChannels = 1;
 	waveformat.nSamplesPerSec = 44100;
-	waveformat.nAvgBytesPerSec = 44100 * 2;  // nSamplesPerSec * nBlockAlign
-	waveformat.nBlockAlign = 2; // bytes per sample ? nChannels times wBitsPerSample divided by 8
-	waveformat.wBitsPerSample = 16; // = 2 bytes  per samples
+	waveformat.wBitsPerSample = 16;
+	waveformat.nBlockAlign = ((waveformat.nChannels  *  waveformat.wBitsPerSample) / 8);
+	waveformat.nAvgBytesPerSec = waveformat.nSamplesPerSec * waveformat.nBlockAlign;
+	
 	waveformat.cbSize = 0;
 
 	m_xAudio2->CreateSourceVoice(&m_SourceVoice, &waveformat);
