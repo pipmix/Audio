@@ -3,11 +3,15 @@
 #include "WAVFileReader.h"
 #include "Helpers.h"
 #include "AudioTools.h"
+#include "WavFile.h"
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
 extern HWND ghWnd;
+
+#define SAMPLERATE 44100
+#define CHANNELS 2
 
 
 class Audio {
@@ -23,20 +27,30 @@ public:
 
 	void tempwork();
 
-
+	void Play(int num);
+	void Stop(int num);
 	void Exit();
 
+	WAVEFORMATEX* GetWaveFormat(int i);
 
 private:
 
 	int m_sampleRate = 44100;
 	int m_channels = 2;
-
+	WavFile wf1;
+	WavFile wf2;
 
 	ComPtr<IXAudio2> m_xAudio2;
 	IXAudio2MasteringVoice*		m_masterVoice;
 	IXAudio2SourceVoice*		m_SourceVoice;
 	IXAudio2SubmixVoice*		m_submixVoice;
+
+	XAUDIO2_SEND_DESCRIPTOR m_sendDesc;
+	XAUDIO2_VOICE_SENDS m_voiceSends;
+
+
+
+
 	XAUDIO2_BUFFER*				m_audioBuffer;
 
 	//ComPtr<IXAudio2SourceVoice> m_sourceVoice;

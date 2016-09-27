@@ -8,7 +8,10 @@ public:
 	App();
 	void Create();
 	void Tick();
+	void Play(int num);
+	void Stop(int num);
 
+	WAVEFORMATEX* GetWaveFormat(int i);
 
 private:
 
@@ -17,5 +20,7 @@ private:
 
 
 	Audio audio;
+
+
 
 };

@@ -15,10 +15,28 @@ void Audio::Create() {
 
 
 	hr = m_xAudio2->CreateMasteringVoice(&m_masterVoice);
-	if (FAILED(hr)) Error(L"Audio Error", L"mastering voice creation");
+	if (FAILED(hr)) Error(L"Audio Error", L"Mastering voice creation");
 
-	//m_xAudio2->CreateMasteringVoice(&m_masterVoice, m_sampleRate, m_channels)))			Error(L"Audio Error", L"mastering voice creation");
+	hr = m_xAudio2->CreateSubmixVoice(&m_submixVoice, CHANNELS, SAMPLERATE);
+	if (FAILED(hr)) Error(L"Audio Error", L"Submix voice creation");
 
+	m_sendDesc = { 0, m_submixVoice };
+	m_voiceSends = { 1, &m_sendDesc };
+
+
+
+	wf1.Load(L"c:/s2.wav");
+	wf2.Load(L"c:/s3.wav");
+
+
+	//hr = m_xAudio2->CreateSourceVoice(&m_SourceVoice, (WAVEFORMATEX*)wf1.GetWaveFormat());
+	//if (FAILED(hr))Error(L"Audio Error", L"Create Source Voice");
+
+	//hr = m_SourceVoice->SubmitSourceBuffer(wf1.GetBuffer());
+	//if (FAILED(hr))Error(L"Audio Error", L"Submit Source Voice");
+
+	//hr = m_SourceVoice->Start(0);
+	//if (FAILED(hr))Error(L"Audio Error", L"Source voice start");
 
 }
 
@@ -198,4 +216,53 @@ void Audio::Exit()
 {
 
 	//m_masterVoice->DestroyVoice();
+}
+
+
+void Audio::Play(int num) {
+	HRESULT hr;
+
+	//WavFile* tmp = &wf1;
+
+	if(num==2){
+	
+		hr = m_xAudio2->CreateSourceVoice(&m_SourceVoice, (WAVEFORMATEX*)wf1.GetWaveFormat());
+		if (FAILED(hr))Error(L"Audio Error", L"Create Source Voice");
+
+		hr = m_SourceVoice->SubmitSourceBuffer(wf1.GetBuffer());
+		if (FAILED(hr))Error(L"Audio Error", L"Submit Source Voice");
+
+		hr = m_SourceVoice->Start(0);
+		if (FAILED(hr))Error(L"Audio Error", L"Source voice start");
+	}
+
+	if (num == 3) {
+
+		hr = m_xAudio2->CreateSourceVoice(&m_SourceVoice, (WAVEFORMATEX*)wf2.GetWaveFormat());
+		if (FAILED(hr))Error(L"Audio Error", L"Create Source Voice");
+
+		hr = m_SourceVoice->SubmitSourceBuffer(wf2.GetBuffer());
+		if (FAILED(hr))Error(L"Audio Error", L"Submit Source Voice");
+
+		hr = m_SourceVoice->Start(0);
+		if (FAILED(hr))Error(L"Audio Error", L"Source voice start");
+	}
+
+
+
+
+
+
+
+}
+
+void Audio::Stop(int num) {
+
+}
+
+WAVEFORMATEX* Audio::GetWaveFormat(int i) {
+
+	if (i == 2)return wf1.GetWaveFormat();
+	else if (i == 3)return wf2.GetWaveFormat();
+	
 }
