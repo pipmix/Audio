@@ -150,12 +150,14 @@
     <ClInclude Include="AudioTools.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Defines.h" />
+    <ClInclude Include="EF_Gain.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Note.h" />
+    <ClInclude Include="Osc.h" />
     <ClInclude Include="Pattern.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Util.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="WavFile.h" />
     <ClInclude Include="WAVFileReader.h" />
   </ItemGroup>
@@ -164,14 +166,17 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="AudioChannel.cpp" />
     <ClCompile Include="AudioTools.cpp" />
+    <ClCompile Include="EF_Gain.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Osc.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WavFile.cpp" />
     <ClCompile Include="WAVFileReader.cpp" />
   </ItemGroup>

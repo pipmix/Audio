@@ -2,6 +2,7 @@
 #include "Audio.h"
 
 extern Audio gAudio;
+
 class App {
 
 public:

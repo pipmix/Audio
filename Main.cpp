@@ -171,7 +171,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 
 					float vChange = (float)pp *0.01f;
-					gAudio.SetVolume(vChange, 1);
+					//gAudio.SetVolume(vChange, 1);
+					gAudio.SetPitch(vChange, 1);
 					SendMessage(hEditBox, EM_SETSEL, -2, -2);
 					SendMessage(hEditBox, EM_REPLACESEL, 0, (LPARAM)to_wstring(vChange).c_str());
 
